@@ -17,7 +17,7 @@
       padding:20px;
     }
     h1{margin-bottom:20px;}
-    select, button{
+    select, button, input{
       padding:10px;
       margin:8px;
       border-radius:8px;
@@ -73,8 +73,9 @@
       <option>B</option>
       <option>C</option>
     </select>
+    <input type="text" id="subject" placeholder="Enter Subject Name">
     <br>
-    <button onclick="startProcess()">Generate QR Code</button>
+    <button onclick="requestLocation()">Generate QR Code</button>
   </div>
 
   <!-- QR + Timers -->
@@ -84,68 +85,103 @@
     <div class="timer">⏱ 20 Second Timer: <span id="min-timer">20</span>s</div>
   </div>
 
-  <!-- QR Code Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script>
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getFirestore, doc, setDoc, collection, addDoc, updateDoc } 
+      from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDhNP5ZSkVhAJUwxOLi1DYDEGddkDJHejA",
+      authDomain: "attendweb-74d80.firebaseapp.com",
+      projectId: "attendweb-74d80",
+      storageBucket: "attendweb-74d80.firebasestorage.app",
+      messagingSenderId: "664718667922",
+      appId: "1:664718667922:web:bb8b5383ba1c05bbaef64b",
+      measurementId: "G-EGEKJ5P09G"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
     let secTimer, minTimer;
     let secCount = 5;
-    let minCount = 20; // 5 minutes = 300s
+    let minCount = 20;
     let qr;
+    let classDocRef; // reference for class
 
+    // ✅ Location Request
+    window.requestLocation = function(){
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async (pos)=>{
+          let lat = pos.coords.latitude;
+          let lng = pos.coords.longitude;
+
+          // ✅ Create Class in Firestore
+          let course = document.getElementById("course").value;
+          let year = document.getElementById("year").value;
+          let division = document.getElementById("division").value;
+          let subject = document.getElementById("subject").value;
+          let date = new Date().toLocaleDateString();
+
+          classDocRef = await addDoc(collection(db,"Classes"),{
+            course, year, division, subject, date,
+            location:{lat,lng}
+          });
+
+          startProcess();
+        }, ()=>{
+          alert("⚠ Location access required!");
+        });
+      } else {
+        alert("❌ Geolocation not supported");
+      }
+    }
+
+    // ✅ Start Process
     function startProcess(){
-      // Hide form & show QR section
       document.getElementById("form-section").style.display="none";
       document.getElementById("qr-section").style.display="block";
 
-      // Reset timers
       secCount = 5;
       minCount = 20;
 
-      // First QR generate
       generateQR();
-
-      // Start timers
       updateTimers();
     }
 
+    // ✅ Timers
     function updateTimers(){
-      // 5s timer
       secTimer = setInterval(()=>{
         secCount--;
         document.getElementById("sec-timer").innerText = secCount;
 
         if(secCount <= 0){
-          secCount = 5; // reset
-          generateQR(); // new QR
+          secCount = 5;
+          generateQR();
         }
       },1000);
 
-      // 5min timer
       minTimer = setInterval(()=>{
         minCount--;
         document.getElementById("min-timer").innerText = minCount;
 
         if(minCount <= 0){
-  clearInterval(secTimer);
-  clearInterval(minTimer);
-  document.getElementById("qr-section").innerHTML = `
-    <h2>⏱ Time Over! Attendance Closed.</h2>
-    <button onclick="window.location.href='TeacherHomepage.html'" 
-            style="margin-top:20px; padding:10px 20px; font-size:16px; border:none;
-                   border-radius:8px; background:linear-gradient(90deg,#06b6d4,#0284c7);
-                   color:white; cursor:pointer;">
-      ⬅ Back
-    </button>
-  `;
-}
-
+          clearInterval(secTimer);
+          clearInterval(minTimer);
+          document.getElementById("qr-section").innerHTML = `
+            <h2>⏱ Time Over! Attendance Closed.</h2>
+            <button onclick="window.location.href='TeacherHomepage.html'">⬅ Back</button>`;
+        }
       },1000);
     }
 
-    function generateQR(){
+    // ✅ QR Generator + Store
+    async function generateQR(){
       let data = "Course:"+document.getElementById("course").value+
                  " | Year:"+document.getElementById("year").value+
                  " | Division:"+document.getElementById("division").value+
+                 " | Subject:"+document.getElementById("subject").value+
                  " | Time:"+new Date().toLocaleTimeString();
 
       document.getElementById("qrcode").innerHTML="";
@@ -154,7 +190,24 @@
         width: 200,
         height: 200
       });
+
+      // ✅ Store in QR sub-collection
+      let qrRef = await addDoc(collection(db,"Classes",classDocRef.id,"QR"),{
+        data,
+        createdAt: new Date(),
+        status:"Active"
+      });
+
+      // ❌ Expire old QR after 5 sec
+      setTimeout(async ()=>{
+        await updateDoc(doc(db,"Classes",classDocRef.id,"QR",qrRef.id),{
+          status:"Expired"
+        });
+      },5000);
     }
   </script>
+
+  <!-- QR Code Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </body>
 </html>
