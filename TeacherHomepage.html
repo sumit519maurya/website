@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Teacher Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: rgba(11, 18, 32, 0.8);
+      --accent: #06b6d4;
+      --accent-2: #7c3aed;
+      --text: #ffffff;
+      --muted: #cbd5e1;
+      --glow: rgba(6, 182, 212, 0.3);
+      --glow-2: rgba(124, 58, 237, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, #071024 0%, #0f2a42 100%);
+      color: var(--text);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Decorative background elements */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.15) 0%, transparent 20%),
+        radial-gradient(circle at 90% 70%, rgba(124, 58, 237, 0.15) 0%, transparent 20%);
+      z-index: -1;
+    }
+
+    /* Header */
+    header {
+      width: 100%;
+      padding: 18px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 4px 20px rgba(2, 6, 23, 0.6);
+      backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+
+    header h2 {
+      font-size: 24px;
+      font-weight: 600;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .profile-btn {
+      background: linear-gradient(90deg, var(--accent-2) 0%, #5b21b6 100%);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 24px;
+      font-size: 14px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile-btn:hover { 
+      background: linear-gradient(90deg, #7c3aed 0%, #9d6bff 100%); 
+      transform: translateY(-2px); 
+      box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4);
+    }
+
+    .profile-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Dashboard main */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      gap: 40px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 800px;
+      min-height: 180px;
+      background: rgba(11, 18, 32, 0.7);
+      padding: 50px 40px;
+      border-radius: 20px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.4s ease;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+      animation: fadeInUp 0.8s ease-out;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: -1;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 40px rgba(2, 6, 23, 0.8);
+    }
+
+    .card:hover::before {
+      opacity: 0.1;
+    }
+
+    /* First card specific styles */
+    .card:nth-child(1):hover {
+      border-color: var(--accent);
+      box-shadow: 0 15px 40px var(--glow);
+    }
+
+    /* Second card specific styles */
+    .card:nth-child(2):hover {
+      border-color: var(--accent-2);
+      box-shadow: 0 15px 40px var(--glow-2);
+    }
+
+    .card h3 {
+      font-size: 28px;
+      margin-bottom: 16px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card p {
+      font-size: 18px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .card-icon {
+      font-size: 32px;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover .card-icon {
+      transform: scale(1.2);
+    }
+
+    @keyframes fadeInUp {
+      0% { 
+        opacity: 0; 
+        transform: translateY(30px); 
+      }
+      100% { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      header {
+        padding: 16px 20px;
+      }
+      
+      header h2 {
+        font-size: 20px;
+      }
+      
+      .card {
+        padding: 40px 24px;
+        min-height: 160px;
+      }
+      
+      .card h3 {
+        font-size: 24px;
+      }
+      
+      .card p {
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      main {
+        padding: 40px 16px;
+        gap: 30px;
+      }
+      
+      .card {
+        padding: 30px 20px;
+        min-height: 140px;
+      }
+      
+      .card h3 {
+        font-size: 22px;
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      .profile-btn {
+        padding: 10px 18px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <h2>Teacher Dashboard</h2>
+    <a href="profile.html" class="profile-btn">
+      <i class="fas fa-user-circle"></i>
+      Profile
+    </a>
+  </header>
+
+  <!-- Main Dashboard -->
+  <main>
+      <a href="TeacherTT.html" class="card">
+        <h3><i class="fas fa-calendar-alt card-icon"></i> Teacher Timetable</h3>
+        <p>View and manage your class schedule</p>
+      </a>
+
+      <a href="TeachetStudentQRpage.html" class="card">
+        <h3><i class="fas fa-qrcode card-icon"></i> Start Attendance</h3>
+        <p>Begin taking attendance for your class</p>
+      </a>
+  </main>
+
+  <script>
+    // Add subtle animation to cards on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.card');
+      
+      cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+      });
+    });
+  </script>
+</body>
+</html>

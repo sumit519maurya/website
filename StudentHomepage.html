@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Home - QR Scanner</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0a0a0a;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .profile {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      cursor: pointer;
+      font-size: 20px;
+    }
+    #reader {
+      width: 320px;
+      height: 320px;
+      margin-top: 30px;
+      border: 2px solid #00ff88;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #00ff88;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile">👤 Profile</div>
+  <h2>📷 Scan Your QR for Attendance</h2>
+
+  <div id="reader"></div>
+  <div id="result"></div>
+
+  <script>
+    function startScanner() {
+      const html5QrCode = new Html5Qrcode("reader");
+
+      html5QrCode.start(
+        { facingMode: "environment" }, // back camera on phone, webcam on pc
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 }
+        },
+        (decodedText) => {
+          // jab scan hoga to result show karo aur camera band karo
+          document.getElementById("result").innerText = "✅ Your Attendance is Done!";
+          html5QrCode.stop();
+          document.getElementById("reader").style.display = "none";
+        },
+        (errorMessage) => {
+          console.log("Scanning...", errorMessage);
+        }
+      ).catch((err) => {
+        console.error("Camera start error:", err);
+        document.getElementById("result").innerText = "⚠️ Camera not accessible!";
+      });
+    }
+
+    startScanner();
+  </script>
+</body>
+</html>

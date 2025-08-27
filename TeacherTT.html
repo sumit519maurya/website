@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Teacher Timetable</title>
+  <style>
+    :root{
+      --bg: #0f172a;
+      --accent: #06b6d4;
+      --text: #ffffff;
+    }
+
+    *{margin:0; padding:0; box-sizing:border-box; font-family:Inter, sans-serif;}
+
+    body{
+      min-height:100vh;
+      background: linear-gradient(180deg,#071024 0%,#071a2a 100%);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      color:var(--text);
+      padding:20px;
+    }
+
+    .image-box{
+      max-width:900px;
+      width:100%;
+      border-radius:16px;
+      overflow:hidden;
+      box-shadow:0 8px 20px rgba(0,0,0,0.6);
+      margin-bottom:30px;
+      animation:fadeIn 1s ease;
+    }
+    .image-box img{
+      width:100%;
+      height:auto;
+      display:block;
+    }
+
+    .back-btn{
+      background:linear-gradient(90deg, #06b6d4 0%, #0284c7 100%);
+      color:#fff;
+      padding:12px 30px;
+      border-radius:25px;
+      text-decoration:none;
+      font-weight:600;
+      transition:transform .2s, background .2s;
+      box-shadow:0 6px 15px rgba(0,0,0,0.5);
+    }
+    .back-btn:hover{
+      transform:translateY(-3px);
+      background:linear-gradient(90deg,#0ea5e9 0%, #06b6d4 100%);
+    }
+
+    @keyframes fadeIn{
+      from{opacity:0; transform:scale(0.95);}
+      to{opacity:1; transform:scale(1);}
+    }
+  </style>
+</head>
+<body>
+  <!-- Timetable Image -->
+  <div class="image-box">
+    <!-- apni PC wali image ka naam yaha change karna -->
+    <img src="c:\Users\sumit\Downloads\tt.jpg" alt="Teacher Timetable">
+  </div>
+
+  <!-- Back Button -->
+  <a href="TeacherHomepage.html" class="back-btn">⬅ Back</a>
+</body>
+</html>

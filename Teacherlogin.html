@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Teacher Login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: rgba(11, 18, 32, 0.8);
+      --accent: #06b6d4;
+      --accent-2: #7c3aed;
+      --text: #e6eef8;
+      --muted: #98a0b3;
+      --glow: rgba(6, 182, 212, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #071024 0%, #0f2a42 100%);
+      color: var(--text);
+      padding: 24px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Decorative background elements */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.15) 0%, transparent 20%),
+        radial-gradient(circle at 90% 70%, rgba(124, 58, 237, 0.15) 0%, transparent 20%);
+      z-index: -1;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 460px;
+      background: var(--card);
+      border-radius: 24px;
+      padding: 48px 40px;
+      box-shadow: 
+        0 25px 50px rgba(2, 6, 23, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      animation: fadeInUp 0.8s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0.05),
+        rgba(255, 255, 255, 0.01)
+      );
+      transform: rotate(30deg);
+      z-index: -1;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    p.lead {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      position: relative;
+      margin-bottom: 28px;
+    }
+
+    .input-container {
+      position: relative;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(15, 23, 42, 0.6);
+      color: var(--text);
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--glow);
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    label {
+      position: absolute;
+      left: 16px;
+      top: 18px;
+      color: var(--muted);
+      font-size: 16px;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    input:focus + label,
+    input:not(:placeholder-shown) + label {
+      top: -12px;
+      left: 12px;
+      font-size: 12px;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      padding: 0 8px;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .toggle-password:hover {
+      color: var(--accent);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: rgb(255, 255, 255);
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 16px rgba(2, 6, 23, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: all 0.6s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 20px rgba(2, 6, 23, 0.6);
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .register-link {
+      display: block;
+      margin-top: 24px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--accent-2);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .register-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent-2);
+      transition: width 0.3s ease;
+    }
+
+    .register-link:hover {
+      color: #9d6bff;
+    }
+
+    .register-link:hover::after {
+      width: 100%;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      0% { 
+        opacity: 0; 
+        transform: translateY(30px); 
+      }
+      100% { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+
+    /* Responsive design */
+    @media (max-width: 480px) {
+      .card {
+        padding: 36px 24px;
+      }
+      
+      h1 {
+        font-size: 28px;
+      }
+      
+      input {
+        padding: 16px 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <h1>Teacher Login</h1>
+      <p class="lead">Enter your Teacher Code and Password to access your account</p>
+    </div>
+    
+    <form action="TeacherHomepage.html" method="get">
+      <div class="form-group">
+        <div class="input-container">
+          <input type="text" id="code" name="code" placeholder=" " required>
+          <label for="code">Teacher Code</label>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <div class="input-container">
+          <input type="password" id="password" name="password" placeholder=" " required>
+          <label for="password">Password</label>
+          <span class="toggle-password" id="togglePassword">
+            <i class="far fa-eye"></i>
+          </span>
+        </div>
+      </div>
+      
+      <button type="submit" class="btn">Login</button>
+    </form>
+    
+    <a href="TeacherRegester.html" class="register-link">New Teacher? Register Here</a>
+  </div>
+
+  <script>
+    // Toggle password visibility
+    document.getElementById('togglePassword').addEventListener('click', function() {
+      const passwordInput = document.getElementById('password');
+      const icon = this.querySelector('i');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+
+    // Add floating label functionality
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+      // Check if input has value on page load (for browser autofill)
+      if (input.value) {
+        input.parentElement.querySelector('label').classList.add('active');
+      }
+      
+      input.addEventListener('focus', () => {
+        input.parentElement.querySelector('label').classList.add('active');
+      });
+      
+      input.addEventListener('blur', () => {
+        if (!input.value) {
+          input.parentElement.querySelector('label').classList.remove('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

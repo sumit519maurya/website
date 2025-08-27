@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Student Attendance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg,#0f172a,#1e293b);
+      color:white;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    h1{margin-bottom:20px;}
+    select, button{
+      padding:10px;
+      margin:8px;
+      border-radius:8px;
+      border:none;
+      font-size:16px;
+    }
+    button{
+      background:linear-gradient(90deg,#06b6d4,#0284c7);
+      color:white;
+      cursor:pointer;
+      transition:.3s;
+    }
+    button:hover{background:linear-gradient(90deg,#0ea5e9,#06b6d4);}
+    #qr-section{
+      margin-top:30px;
+      text-align:center;
+      display:none;
+    }
+    #qrcode{
+      margin:20px auto;
+      padding:15px;
+      background:white;
+      border-radius:12px;
+      display:inline-block;
+    }
+    .timer{
+      font-size:18px;
+      margin:5px 0;
+      font-weight:bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Student Attendance</h1>
+
+  <!-- Form Section -->
+  <div id="form-section">
+    <select id="course">
+      <option value="">Select Course</option>
+      <option>BCA</option>
+      <option>BSc IT</option>
+      <option>Engineering</option>
+    </select>
+    <select id="year">
+      <option value="">Select Year</option>
+      <option value="FY">FY</option>
+      <option value="SY">SY</option>
+      <option value="TY">TY</option>
+    </select>
+    <select id="division">
+      <option value="">Select Division</option>
+      <option>A</option>
+      <option>B</option>
+      <option>C</option>
+    </select>
+    <br>
+    <button onclick="startProcess()">Generate QR Code</button>
+  </div>
+
+  <!-- QR + Timers -->
+  <div id="qr-section">
+    <div id="qrcode"></div>
+    <div class="timer">⏳ 5 Second Timer: <span id="sec-timer">5</span>s</div>
+    <div class="timer">⏱ 20 Second Timer: <span id="min-timer">20</span>s</div>
+  </div>
+
+  <!-- QR Code Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    let secTimer, minTimer;
+    let secCount = 5;
+    let minCount = 20; // 5 minutes = 300s
+    let qr;
+
+    function startProcess(){
+      // Hide form & show QR section
+      document.getElementById("form-section").style.display="none";
+      document.getElementById("qr-section").style.display="block";
+
+      // Reset timers
+      secCount = 5;
+      minCount = 20;
+
+      // First QR generate
+      generateQR();
+
+      // Start timers
+      updateTimers();
+    }
+
+    function updateTimers(){
+      // 5s timer
+      secTimer = setInterval(()=>{
+        secCount--;
+        document.getElementById("sec-timer").innerText = secCount;
+
+        if(secCount <= 0){
+          secCount = 5; // reset
+          generateQR(); // new QR
+        }
+      },1000);
+
+      // 5min timer
+      minTimer = setInterval(()=>{
+        minCount--;
+        document.getElementById("min-timer").innerText = minCount;
+
+        if(minCount <= 0){
+  clearInterval(secTimer);
+  clearInterval(minTimer);
+  document.getElementById("qr-section").innerHTML = `
+    <h2>⏱ Time Over! Attendance Closed.</h2>
+    <button onclick="window.location.href='TeacherHomepage.html'" 
+            style="margin-top:20px; padding:10px 20px; font-size:16px; border:none;
+                   border-radius:8px; background:linear-gradient(90deg,#06b6d4,#0284c7);
+                   color:white; cursor:pointer;">
+      ⬅ Back
+    </button>
+  `;
+}
+
+      },1000);
+    }
+
+    function generateQR(){
+      let data = "Course:"+document.getElementById("course").value+
+                 " | Year:"+document.getElementById("year").value+
+                 " | Division:"+document.getElementById("division").value+
+                 " | Time:"+new Date().toLocaleTimeString();
+
+      document.getElementById("qrcode").innerHTML="";
+      qr = new QRCode(document.getElementById("qrcode"), {
+        text: data,
+        width: 200,
+        height: 200
+      });
+    }
+  </script>
+</body>
+</html>
